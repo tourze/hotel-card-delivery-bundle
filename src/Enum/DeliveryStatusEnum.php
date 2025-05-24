@@ -25,7 +25,7 @@ enum DeliveryStatusEnum: string implements Labelable, Itemable, Selectable
 
     public function getLabel(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => '待分配',
             self::ASSIGNED => '已分配',
             self::IN_PROGRESS => '配送中',
@@ -61,4 +61,4 @@ enum DeliveryStatusEnum: string implements Labelable, Itemable, Selectable
     {
         return in_array($this, [self::PENDING, self::ASSIGNED, self::IN_PROGRESS]);
     }
-} 
+}
