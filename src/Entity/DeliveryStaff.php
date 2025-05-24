@@ -6,11 +6,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use HotelBookingSystem\Enum\DeliveryStaffStatusEnum;
 use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
 use Tourze\DoctrineTimestampBundle\Attribute\UpdateTimeColumn;
+use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStaffStatusEnum;
 use Tourze\HotelCardDeliveryBundle\Repository\DeliveryStaffRepository;
 
 #[ORM\Entity(repositoryClass: DeliveryStaffRepository::class)]

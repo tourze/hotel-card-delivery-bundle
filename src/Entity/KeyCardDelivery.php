@@ -4,11 +4,11 @@ namespace Tourze\HotelCardDeliveryBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use HotelBookingSystem\Enum\DeliveryStatusEnum;
 use Stringable;
 use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
 use Tourze\DoctrineTimestampBundle\Attribute\UpdateTimeColumn;
 use Tourze\HotelAgentBundle\Entity\Order;
+use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
 use Tourze\HotelCardDeliveryBundle\Repository\KeyCardDeliveryRepository;
 use Tourze\HotelProfileBundle\Entity\Hotel;
 

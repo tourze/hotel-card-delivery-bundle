@@ -4,10 +4,10 @@ namespace Tourze\HotelCardDeliveryBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use HotelBookingSystem\Enum\DeliveryStatusEnum;
 use Tourze\HotelAgentBundle\Entity\Order;
 use Tourze\HotelCardDeliveryBundle\Entity\DeliveryStaff;
 use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
+use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
 use Tourze\HotelProfileBundle\Entity\Hotel;
 
 /**

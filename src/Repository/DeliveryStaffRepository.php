@@ -4,8 +4,8 @@ namespace Tourze\HotelCardDeliveryBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use HotelBookingSystem\Enum\DeliveryStaffStatusEnum;
 use Tourze\HotelCardDeliveryBundle\Entity\DeliveryStaff;
+use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStaffStatusEnum;
 
 /**
  * @extends ServiceEntityRepository<DeliveryStaff>
