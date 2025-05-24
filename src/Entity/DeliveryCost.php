@@ -13,7 +13,6 @@ use Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository;
 
 #[ORM\Entity(repositoryClass: DeliveryCostRepository::class)]
 #[ORM\Table(name: 'delivery_cost', options: ['comment' => '房卡配送费用表'])]
-#[ORM\Index(name: 'delivery_cost_idx_staff', columns: ['delivery_staff_id'])]
 #[ORM\Index(name: 'delivery_cost_idx_delivery', columns: ['delivery_id'])]
 class DeliveryCost implements Stringable
 {
@@ -21,10 +20,6 @@ class DeliveryCost implements Stringable
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::BIGINT)]
     private ?int $id = null;
-
-    #[ORM\ManyToOne(targetEntity: DeliveryStaff::class)]
-    #[ORM\JoinColumn(name: 'delivery_staff_id', referencedColumnName: 'id', nullable: false)]
-    private DeliveryStaff $deliveryStaff;
 
     #[ORM\ManyToOne(targetEntity: KeyCardDelivery::class)]
     #[ORM\JoinColumn(name: 'delivery_id', referencedColumnName: 'id', nullable: false)]
@@ -89,17 +84,6 @@ class DeliveryCost implements Stringable
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getDeliveryStaff(): DeliveryStaff
-    {
-        return $this->deliveryStaff;
-    }
-
-    public function setDeliveryStaff(DeliveryStaff $deliveryStaff): self
-    {
-        $this->deliveryStaff = $deliveryStaff;
-        return $this;
     }
 
     public function getDelivery(): KeyCardDelivery
@@ -272,4 +256,4 @@ class DeliveryCost implements Stringable
     {
         $this->updateTime = $updateTime;
     }
-} 
+}

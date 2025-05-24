@@ -5,7 +5,6 @@ namespace Tourze\HotelCardDeliveryBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Tourze\HotelAgentBundle\Entity\Order;
-use Tourze\HotelCardDeliveryBundle\Entity\DeliveryStaff;
 use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
 use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
 use Tourze\HotelProfileBundle\Entity\Hotel;
@@ -33,19 +32,6 @@ class KeyCardDeliveryRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('kcd')
             ->andWhere('kcd.status = :status')
             ->setParameter('status', DeliveryStatusEnum::PENDING)
-            ->orderBy('kcd.deliveryTime', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * 查找指定配送员的配送任务
-     */
-    public function findByDeliveryStaff(DeliveryStaff $deliveryStaff): array
-    {
-        return $this->createQueryBuilder('kcd')
-            ->andWhere('kcd.deliveryStaff = :deliveryStaff')
-            ->setParameter('deliveryStaff', $deliveryStaff)
             ->orderBy('kcd.deliveryTime', 'ASC')
             ->getQuery()
             ->getResult();
@@ -127,7 +113,7 @@ class KeyCardDeliveryRepository extends ServiceEntityRepository
     }
 
     /**
-     * 查找需要尽快分配的配送任务（按时间紧急程度排序）
+     * 查找需要尽快处理的配送任务（按时间紧急程度排序）
      */
     public function findUrgentDeliveries(\DateTimeInterface $today = null): array
     {
@@ -183,4 +169,4 @@ class KeyCardDeliveryRepository extends ServiceEntityRepository
             
         return $result ? (float)$result : 0.0;
     }
-} 
+}

@@ -4,5 +4,11 @@ services:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+  Tourze\HotelCardDeliveryBundle\Controller\:
+    resource: '../../Controller/'
+  Tourze\HotelCardDeliveryBundle\DataFixtures\:
+    resource: '../../DataFixtures/'
   Tourze\HotelCardDeliveryBundle\Repository\:
     resource: '../../Repository/'
+  Tourze\HotelCardDeliveryBundle\Service\:
+    resource: '../../Service/'

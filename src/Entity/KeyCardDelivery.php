@@ -16,7 +16,6 @@ use Tourze\HotelProfileBundle\Entity\Hotel;
 #[ORM\Table(name: 'key_card_delivery', options: ['comment' => '房卡配送任务表'])]
 #[ORM\Index(name: 'key_card_delivery_idx_order_id', columns: ['order_id'])]
 #[ORM\Index(name: 'key_card_delivery_idx_hotel_id', columns: ['hotel_id'])]
-#[ORM\Index(name: 'key_card_delivery_idx_staff_id', columns: ['delivery_staff_id'])]
 #[ORM\Index(name: 'key_card_delivery_idx_status', columns: ['status'])]
 class KeyCardDelivery implements Stringable
 {
@@ -28,7 +27,7 @@ class KeyCardDelivery implements Stringable
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'order_id', nullable: false)]
     private ?Order $order = null;
-    
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'hotel_id', nullable: false)]
     private ?Hotel $hotel = null;
@@ -38,10 +37,6 @@ class KeyCardDelivery implements Stringable
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['comment' => '配送时间'])]
     private ?\DateTimeInterface $deliveryTime = null;
-
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'delivery_staff_id', nullable: true)]
-    private ?DeliveryStaff $deliveryStaff = null;
 
     #[ORM\Column(type: Types::STRING, length: 20, enumType: DeliveryStatusEnum::class, options: ['comment' => '配送状态'])]
     private DeliveryStatusEnum $status = DeliveryStatusEnum::PENDING;
@@ -123,17 +118,6 @@ class KeyCardDelivery implements Stringable
         return $this;
     }
 
-    public function getDeliveryStaff(): ?DeliveryStaff
-    {
-        return $this->deliveryStaff;
-    }
-
-    public function setDeliveryStaff(?DeliveryStaff $deliveryStaff): self
-    {
-        $this->deliveryStaff = $deliveryStaff;
-        return $this;
-    }
-
     public function getStatus(): DeliveryStatusEnum
     {
         return $this->status;
@@ -197,16 +181,6 @@ class KeyCardDelivery implements Stringable
     public function getUpdateTime(): ?\DateTimeInterface
     {
         return $this->updateTime;
-    }
-
-    /**
-     * 分配配送员
-     */
-    public function assignDeliveryStaff(DeliveryStaff $deliveryStaff): self
-    {
-        $this->deliveryStaff = $deliveryStaff;
-        $this->status = DeliveryStatusEnum::ASSIGNED;
-        return $this;
     }
 
     /**
@@ -275,9 +249,9 @@ class KeyCardDelivery implements Stringable
     }
 
     /**
-     * 判断是否可以分配配送员
+     * 判断是否可以开始配送
      */
-    public function canAssignStaff(): bool
+    public function canStartDelivery(): bool
     {
         return $this->status === DeliveryStatusEnum::PENDING;
     }
@@ -291,4 +265,4 @@ class KeyCardDelivery implements Stringable
     {
         $this->updateTime = $updateTime;
     }
-} 
+}

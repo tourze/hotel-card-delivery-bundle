@@ -5,7 +5,6 @@ namespace Tourze\HotelCardDeliveryBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Tourze\HotelCardDeliveryBundle\Entity\DeliveryCost;
-use Tourze\HotelCardDeliveryBundle\Entity\DeliveryStaff;
 use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
 
 /**
@@ -62,40 +61,12 @@ class DeliveryCostRepository extends ServiceEntityRepository
     }
 
     /**
-     * 根据配送员查找配送费用
-     */
-    public function findByDeliveryStaff(DeliveryStaff $deliveryStaff): array
-    {
-        return $this->createQueryBuilder('dc')
-            ->andWhere('dc.deliveryStaff = :deliveryStaff')
-            ->setParameter('deliveryStaff', $deliveryStaff)
-            ->orderBy('dc.createTime', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * 查找未结算的配送费用
      */
     public function findUnsettled(): array
     {
         return $this->createQueryBuilder('dc')
             ->andWhere('dc.settled = :settled')
-            ->setParameter('settled', false)
-            ->orderBy('dc.createTime', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * 查找指定配送员的未结算配送费用
-     */
-    public function findUnsettledByStaff(DeliveryStaff $deliveryStaff): array
-    {
-        return $this->createQueryBuilder('dc')
-            ->andWhere('dc.deliveryStaff = :deliveryStaff')
-            ->andWhere('dc.settled = :settled')
-            ->setParameter('deliveryStaff', $deliveryStaff)
             ->setParameter('settled', false)
             ->orderBy('dc.createTime', 'ASC')
             ->getQuery()
@@ -118,19 +89,16 @@ class DeliveryCostRepository extends ServiceEntityRepository
     }
 
     /**
-     * 计算指定配送员在指定时间段内的总配送费用
+     * 计算指定时间段内的总配送费用
      */
-    public function calculateTotalCostByStaffAndPeriod(
-        DeliveryStaff $deliveryStaff,
+    public function calculateTotalCostByPeriod(
         \DateTimeInterface $start,
         \DateTimeInterface $end
     ): float {
         $result = $this->createQueryBuilder('dc')
             ->select('SUM(dc.totalCost) as totalCost')
-            ->andWhere('dc.deliveryStaff = :deliveryStaff')
             ->andWhere('dc.createTime >= :start')
             ->andWhere('dc.createTime <= :end')
-            ->setParameter('deliveryStaff', $deliveryStaff)
             ->setParameter('start', $start)
             ->setParameter('end', $end)
             ->getQuery()
@@ -138,4 +106,4 @@ class DeliveryCostRepository extends ServiceEntityRepository
         
         return (float)($result ?: 0);
     }
-} 
+}
