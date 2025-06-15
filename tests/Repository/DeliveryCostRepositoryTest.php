@@ -8,7 +8,7 @@ use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
 use Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository;
 
 #[Group('integration')]
-class DeliveryCostRepositoryTest extends BaseRepositoryTest
+class DeliveryCostRepositoryTest extends BaseRepositoryTestCase
 {
     private DeliveryCostRepository $repository;
     private TestEntityFactory $factory;

@@ -13,7 +13,7 @@ use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
 use Tourze\HotelCardDeliveryBundle\HotelCardDeliveryBundle;
 use Tourze\IntegrationTestKernel\IntegrationTestKernel;
 
-abstract class BaseRepositoryTest extends KernelTestCase
+abstract class BaseRepositoryTestCase extends KernelTestCase
 {
     protected EntityManagerInterface $entityManager;
     protected SchemaTool $schemaTool;

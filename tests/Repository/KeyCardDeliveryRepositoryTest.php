@@ -8,7 +8,7 @@ use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
 use Tourze\HotelCardDeliveryBundle\Repository\KeyCardDeliveryRepository;
 
 #[Group('integration')]
-class KeyCardDeliveryRepositoryTest extends BaseRepositoryTest
+class KeyCardDeliveryRepositoryTest extends BaseRepositoryTestCase
 {
     private KeyCardDeliveryRepository $repository;
     private TestEntityFactory $factory;
