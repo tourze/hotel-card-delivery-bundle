@@ -115,7 +115,7 @@ class KeyCardDeliveryRepository extends ServiceEntityRepository
     /**
      * 查找需要尽快处理的配送任务（按时间紧急程度排序）
      */
-    public function findUrgentDeliveries(\DateTimeInterface $today = null): array
+    public function findUrgentDeliveries(?\DateTimeInterface $today = null): array
     {
         $today = $today ?? new \DateTime();
         

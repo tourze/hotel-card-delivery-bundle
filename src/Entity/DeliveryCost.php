@@ -59,11 +59,11 @@ class DeliveryCost implements Stringable
     private ?string $remarks = null;
 
     #[CreateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeInterface $createTime = null;
 
     #[UpdateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeInterface $updateTime = null;
 
     #[CreatedByColumn]

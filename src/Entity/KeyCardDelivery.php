@@ -54,11 +54,11 @@ class KeyCardDelivery implements Stringable
     private ?string $remark = null;
 
     #[CreateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeInterface $createTime = null;
 
     #[UpdateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeInterface $updateTime = null;
 
     public function __toString(): string

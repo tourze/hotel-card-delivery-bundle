@@ -28,7 +28,8 @@
     "tourze/easy-admin-menu-bundle": "0.1.*",
     "tourze/enum-extra": "0.1.*",
     "tourze/hotel-agent-bundle": "0.0.*",
-    "tourze/hotel-profile-bundle": "0.0.*"
+    "tourze/hotel-profile-bundle": "0.0.*",
+    "tourze/symfony-integration-test-kernel": "0.0.*"
   },
   "require-dev": {
     "phpstan/phpstan": "^2.1",
