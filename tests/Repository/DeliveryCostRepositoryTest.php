@@ -144,8 +144,8 @@ class DeliveryCostRepositoryTest extends BaseRepositoryTestCase
         $this->repository->save($cost2, false);
         $this->repository->save($cost3, true);
 
-        $startDate = new \DateTime('-1 day');
-        $endDate = new \DateTime('+1 day');
+        $startDate = new \DateTimeImmutable('-1 day');
+        $endDate = new \DateTimeImmutable('+1 day');
 
         // Act
         $results = $this->repository->findByDateRange($startDate, $endDate);
@@ -178,8 +178,8 @@ class DeliveryCostRepositoryTest extends BaseRepositoryTestCase
         $this->repository->save($cost1, false);
         $this->repository->save($cost2, true);
 
-        $startDate = new \DateTime('-1 day');
-        $endDate = new \DateTime('+1 day');
+        $startDate = new \DateTimeImmutable('-1 day');
+        $endDate = new \DateTimeImmutable('+1 day');
 
         // Act
         $total = $this->repository->calculateTotalCostByPeriod($startDate, $endDate);
@@ -192,8 +192,8 @@ class DeliveryCostRepositoryTest extends BaseRepositoryTestCase
     public function test_calculateTotalCostByPeriod_withNoData_returnsZero(): void
     {
         // Arrange
-        $startDate = new \DateTime('-1 day');
-        $endDate = new \DateTime('+1 day');
+        $startDate = new \DateTimeImmutable('-1 day');
+        $endDate = new \DateTimeImmutable('+1 day');
 
         // Act
         $total = $this->repository->calculateTotalCostByPeriod($startDate, $endDate);

@@ -81,8 +81,8 @@ class KeyCardDeliveryRepository extends ServiceEntityRepository
      */
     public function findByDeliveryDate(\DateTimeInterface $date): array
     {
-        $startOfDay = new \DateTime($date->format('Y-m-d') . ' 00:00:00');
-        $endOfDay = new \DateTime($date->format('Y-m-d') . ' 23:59:59');
+        $startOfDay = new \DateTimeImmutable($date->format('Y-m-d') . ' 00:00:00');
+        $endOfDay = new \DateTimeImmutable($date->format('Y-m-d') . ' 23:59:59');
         
         return $this->createQueryBuilder('kcd')
             ->andWhere('kcd.deliveryTime >= :startOfDay')
@@ -99,8 +99,8 @@ class KeyCardDeliveryRepository extends ServiceEntityRepository
      */
     public function countByDeliveryDate(\DateTimeInterface $date): int
     {
-        $startOfDay = new \DateTime($date->format('Y-m-d') . ' 00:00:00');
-        $endOfDay = new \DateTime($date->format('Y-m-d') . ' 23:59:59');
+        $startOfDay = new \DateTimeImmutable($date->format('Y-m-d') . ' 00:00:00');
+        $endOfDay = new \DateTimeImmutable($date->format('Y-m-d') . ' 23:59:59');
         
         return $this->createQueryBuilder('kcd')
             ->select('COUNT(kcd.id)')
@@ -117,7 +117,7 @@ class KeyCardDeliveryRepository extends ServiceEntityRepository
      */
     public function findUrgentDeliveries(?\DateTimeInterface $today = null): array
     {
-        $today = $today ?? new \DateTime();
+        $today = $today ?? new \DateTimeImmutable();
         
         return $this->createQueryBuilder('kcd')
             ->andWhere('kcd.status = :status')
@@ -135,9 +135,9 @@ class KeyCardDeliveryRepository extends ServiceEntityRepository
      */
     public function findTodayDeliveries(): array
     {
-        $today = new \DateTime();
-        $startOfDay = new \DateTime($today->format('Y-m-d') . ' 00:00:00');
-        $endOfDay = new \DateTime($today->format('Y-m-d') . ' 23:59:59');
+        $today = new \DateTimeImmutable();
+        $startOfDay = new \DateTimeImmutable($today->format('Y-m-d') . ' 00:00:00');
+        $endOfDay = new \DateTimeImmutable($today->format('Y-m-d') . ' 23:59:59');
         
         return $this->createQueryBuilder('kcd')
             ->andWhere('kcd.deliveryTime >= :startOfDay')

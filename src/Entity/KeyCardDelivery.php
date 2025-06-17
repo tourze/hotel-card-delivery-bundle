@@ -199,7 +199,7 @@ class KeyCardDelivery implements Stringable
     {
         $this->status = DeliveryStatusEnum::COMPLETED;
         $this->receiptPhotoUrl = $receiptPhotoUrl;
-        $this->completedTime = new \DateTime();
+        $this->completedTime = new \DateTimeImmutable();
         return $this;
     }
 

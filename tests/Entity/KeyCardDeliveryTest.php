@@ -34,12 +34,12 @@ class KeyCardDeliveryTest extends TestCase
         $this->assertEquals('25.50', $delivery->getFee());
 
         // Test delivery time
-        $deliveryTime = new \DateTime('2024-01-20 14:00:00');
+        $deliveryTime = new \DateTimeImmutable('2024-01-20 14:00:00');
         $delivery->setDeliveryTime($deliveryTime);
         $this->assertEquals($deliveryTime, $delivery->getDeliveryTime());
 
         // Test completed time
-        $completedTime = new \DateTime('2024-01-20 15:00:00');
+        $completedTime = new \DateTimeImmutable('2024-01-20 15:00:00');
         $delivery->setCompletedTime($completedTime);
         $this->assertEquals($completedTime, $delivery->getCompletedTime());
 

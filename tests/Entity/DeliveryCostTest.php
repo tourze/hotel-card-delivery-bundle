@@ -102,7 +102,7 @@ class DeliveryCostTest extends TestCase
         // Should be settled with settlement time
         $this->assertTrue($deliveryCost->isSettled());
         $this->assertNotNull($deliveryCost->getSettlementTime());
-        $this->assertInstanceOf(\DateTime::class, $deliveryCost->getSettlementTime());
+        $this->assertInstanceOf(\DateTimeInterface::class, $deliveryCost->getSettlementTime());
     }
 
     public function test_toString_returnsExpectedFormat(): void

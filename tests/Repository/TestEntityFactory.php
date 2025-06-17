@@ -39,7 +39,7 @@ class TestEntityFactory
             'receipt_photo_url' => null,
             'completed_time' => null,
             'remark' => null,
-            'create_time' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+            'create_time' => (new \DateTime())->format('Y-m-d H:i:s'),
             'update_time' => null,
         ];
         

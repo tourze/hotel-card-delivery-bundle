@@ -45,7 +45,7 @@ class DeliveryCostFixtures extends Fixture implements DependentFixtureInterface
         $completedCost->setUrgencyCost('0.00');
         $completedCost->setExtraCost('5.00'); // 电梯费
         $completedCost->setSettled(true);
-        $completedCost->setSettlementTime(new \DateTime('-1 day 12:00'));
+        $completedCost->setSettlementTime(new \DateTimeImmutable('-1 day 12:00'));
         $completedCost->setRemarks('已完成配送的费用结算');
 
         $manager->persist($completedCost);
@@ -59,7 +59,7 @@ class DeliveryCostFixtures extends Fixture implements DependentFixtureInterface
         $cancelledCost->setUrgencyCost('0.00');
         $cancelledCost->setExtraCost('0.00');
         $cancelledCost->setSettled(true);
-        $cancelledCost->setSettlementTime(new \DateTime('-2 hours'));
+        $cancelledCost->setSettlementTime(new \DateTimeImmutable('-2 hours'));
         $cancelledCost->setRemarks('订单取消的处理费用');
 
         $manager->persist($cancelledCost);

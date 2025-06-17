@@ -24,7 +24,7 @@ class KeyCardDeliveryRepositoryTest extends BaseRepositoryTestCase
 
     private function createTestDelivery(
         DeliveryStatusEnum $status = DeliveryStatusEnum::PENDING,
-        ?\DateTime $deliveryTime = null
+        ?\DateTimeInterface $deliveryTime = null
     ): KeyCardDelivery {
         $data = ['status' => $status->value];
         if ($deliveryTime !== null) {
