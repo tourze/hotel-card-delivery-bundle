@@ -6,8 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
-use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
-use Tourze\DoctrineTimestampBundle\Attribute\UpdateTimeColumn;
+use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
 use Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository;
 
@@ -16,6 +15,7 @@ use Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository;
 #[ORM\Index(name: 'delivery_cost_idx_delivery', columns: ['delivery_id'])]
 class DeliveryCost implements Stringable
 {
+    use TimestampableAware;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::BIGINT)]
@@ -56,17 +56,7 @@ class DeliveryCost implements Stringable
     private bool $settled = false;
 
     #[ORM\Column(type: Types::TEXT, nullable: true, options: ['comment' => '备注'])]
-    private ?string $remarks = null;
-
-    #[CreateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private ?\DateTimeInterface $createTime = null;
-
-    #[UpdateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updateTime = null;
-
-    #[CreatedByColumn]
+    private ?string $remarks = null;#[CreatedByColumn]
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
     private ?int $createdBy = null;
 
@@ -195,19 +185,7 @@ class DeliveryCost implements Stringable
     {
         $this->remarks = $remarks;
         return $this;
-    }
-
-    public function getCreateTime(): ?\DateTimeInterface
-    {
-        return $this->createTime;
-    }
-
-    public function getUpdateTime(): ?\DateTimeInterface
-    {
-        return $this->updateTime;
-    }
-
-    public function getCreatedBy(): ?int
+    }public function getCreatedBy(): ?int
     {
         return $this->createdBy;
     }
@@ -245,15 +223,4 @@ class DeliveryCost implements Stringable
         $this->settled = true;
         $this->settlementTime = new \DateTime();
         return $this;
-    }
-
-    public function setCreateTime(?\DateTimeInterface $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
-    public function setUpdateTime(?\DateTimeInterface $updateTime): void
-    {
-        $this->updateTime = $updateTime;
-    }
-}
+    }}

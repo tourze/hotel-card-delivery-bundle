@@ -5,8 +5,7 @@ namespace Tourze\HotelCardDeliveryBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Stringable;
-use Tourze\DoctrineTimestampBundle\Attribute\CreateTimeColumn;
-use Tourze\DoctrineTimestampBundle\Attribute\UpdateTimeColumn;
+use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\HotelAgentBundle\Entity\Order;
 use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
 use Tourze\HotelCardDeliveryBundle\Repository\KeyCardDeliveryRepository;
@@ -19,6 +18,7 @@ use Tourze\HotelProfileBundle\Entity\Hotel;
 #[ORM\Index(name: 'key_card_delivery_idx_status', columns: ['status'])]
 class KeyCardDelivery implements Stringable
 {
+    use TimestampableAware;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::BIGINT)]
@@ -51,17 +51,7 @@ class KeyCardDelivery implements Stringable
     private ?\DateTimeInterface $completedTime = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true, options: ['comment' => '备注'])]
-    private ?string $remark = null;
-
-    #[CreateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private ?\DateTimeInterface $createTime = null;
-
-    #[UpdateTimeColumn]
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updateTime = null;
-
-    public function __toString(): string
+    private ?string $remark = null;public function __toString(): string
     {
         $orderNo = $this->order ? $this->order->getOrderNo() : 'Unknown';
         $hotelName = $this->hotel ? $this->hotel->getName() : 'Unknown';
@@ -171,19 +161,7 @@ class KeyCardDelivery implements Stringable
     {
         $this->remark = $remark;
         return $this;
-    }
-
-    public function getCreateTime(): ?\DateTimeInterface
-    {
-        return $this->createTime;
-    }
-
-    public function getUpdateTime(): ?\DateTimeInterface
-    {
-        return $this->updateTime;
-    }
-
-    /**
+    }/**
      * 标记为配送中
      */
     public function markAsInProgress(): self
@@ -254,15 +232,4 @@ class KeyCardDelivery implements Stringable
     public function canStartDelivery(): bool
     {
         return $this->status === DeliveryStatusEnum::PENDING;
-    }
-
-    public function setCreateTime(?\DateTimeInterface $createTime): void
-    {
-        $this->createTime = $createTime;
-    }
-
-    public function setUpdateTime(?\DateTimeInterface $updateTime): void
-    {
-        $this->updateTime = $updateTime;
-    }
-}
+    }}
