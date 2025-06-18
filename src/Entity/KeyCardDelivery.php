@@ -53,8 +53,8 @@ class KeyCardDelivery implements Stringable
     #[ORM\Column(type: Types::TEXT, nullable: true, options: ['comment' => '备注'])]
     private ?string $remark = null;public function __toString(): string
     {
-        $orderNo = $this->order ? $this->order->getOrderNo() : 'Unknown';
-        $hotelName = $this->hotel ? $this->hotel->getName() : 'Unknown';
+        $orderNo = $this->order !== null ? $this->order->getOrderNo() : 'Unknown';
+        $hotelName = $this->hotel !== null ? $this->hotel->getName() : 'Unknown';
         
         return sprintf('房卡配送: %s - %s', $orderNo, $hotelName);
     }

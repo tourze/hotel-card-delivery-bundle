@@ -26,8 +26,6 @@ class DeliveryCostFixturesTest extends TestCase
     {
         $fixtures = new DeliveryCostFixtures();
         $dependencies = $fixtures->getDependencies();
-
-        $this->assertIsArray($dependencies);
         $this->assertContains(KeyCardDeliveryFixtures::class, $dependencies);
     }
 

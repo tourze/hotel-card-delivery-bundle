@@ -79,8 +79,6 @@ class DeliveryStatusEnumTest extends TestCase
     public function test_getChoices_returnsCorrectValues(): void
     {
         $choices = DeliveryStatusEnum::getChoices();
-        
-        $this->assertIsArray($choices);
         $this->assertEquals(DeliveryStatusEnum::PENDING, $choices['待分配']);
         $this->assertEquals(DeliveryStatusEnum::ASSIGNED, $choices['已分配']);
         $this->assertEquals(DeliveryStatusEnum::IN_PROGRESS, $choices['配送中']);

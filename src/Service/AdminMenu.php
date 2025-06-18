@@ -20,7 +20,7 @@ class AdminMenu implements MenuProviderInterface
 
     public function __invoke(ItemInterface $item): void
     {
-        if (!$item->getChild('房卡配送')) {
+        if ($item->getChild('房卡配送') === null) {
             $item->addChild('房卡配送');
         }
 

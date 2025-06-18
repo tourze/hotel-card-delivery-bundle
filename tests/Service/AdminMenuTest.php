@@ -18,8 +18,6 @@ class AdminMenuTest extends TestCase
     {
         // Skip this test as it requires dependency injection
         $this->markTestSkipped('This test requires LinkGeneratorInterface dependency');
-
-        $this->assertIsArray($menuItems);
         $this->assertCount(1, $menuItems);
 
         // Check main section
@@ -32,7 +30,6 @@ class AdminMenuTest extends TestCase
         $this->assertEquals('fa fa-credit-card', $mainSection['icon']);
 
         // Check sub-items
-        $this->assertIsArray($mainSection['items']);
         $this->assertCount(2, $mainSection['items']);
 
         // Check first sub-item (配送任务)

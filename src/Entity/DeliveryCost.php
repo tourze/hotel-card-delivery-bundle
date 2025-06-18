@@ -65,7 +65,7 @@ class DeliveryCost implements Stringable
         $orderNo = 'New';
         
         if ($this->delivery !== null && $this->delivery->getOrder() !== null) {
-            $orderNo = $this->delivery->getOrder()->getOrderNo() ?? 'New';
+            $orderNo = $this->delivery->getOrder()->getOrderNo();
         }
         
         return sprintf('配送费用 #%d - %s', $this->id ?? 0, $orderNo);
