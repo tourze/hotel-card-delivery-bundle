@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
-use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
+use Tourze\DoctrineUserBundle\Traits\CreatedByAware;
 use Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository;
 
 #[ORM\Entity(repositoryClass: DeliveryCostRepository::class)]
@@ -16,9 +16,11 @@ use Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository;
 class DeliveryCost implements Stringable
 {
     use TimestampableAware;
+    use CreatedByAware;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(type: Types::BIGINT, options: ['comment' => 'ID'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: KeyCardDelivery::class)]
@@ -49,25 +51,23 @@ class DeliveryCost implements Stringable
     #[Assert\PositiveOrZero]
     private float $distance = 0.0;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '结算时间'])]
-    private ?\DateTimeInterface $settlementTime = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '结算时间'])]
+    private ?\DateTimeImmutable $settlementTime = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['comment' => '是否已结算'])]
     private bool $settled = false;
 
     #[ORM\Column(type: Types::TEXT, nullable: true, options: ['comment' => '备注'])]
-    private ?string $remarks = null;#[CreatedByColumn]
-    #[ORM\Column(type: Types::BIGINT, nullable: true)]
-    private ?int $createdBy = null;
+    private ?string $remarks = null;
 
     public function __toString(): string
     {
         $orderNo = 'New';
-        
-        if ($this->delivery !== null && $this->delivery->getOrder() !== null) {
+
+        if ($this->delivery->getOrder() !== null) {
             $orderNo = $this->delivery->getOrder()->getOrderNo();
         }
-        
+
         return sprintf('配送费用 #%d - %s', $this->id ?? 0, $orderNo);
     }
 
@@ -151,14 +151,14 @@ class DeliveryCost implements Stringable
         return $this;
     }
 
-    public function getSettlementTime(): ?\DateTimeInterface
+    public function getSettlementTime(): ?\DateTimeImmutable
     {
         return $this->settlementTime;
     }
 
     public function setSettlementTime(?\DateTimeInterface $settlementTime): self
     {
-        $this->settlementTime = $settlementTime;
+        $this->settlementTime = $settlementTime instanceof \DateTimeImmutable ? $settlementTime : ($settlementTime !== null ? \DateTimeImmutable::createFromInterface($settlementTime) : null);
         return $this;
     }
 
@@ -171,7 +171,7 @@ class DeliveryCost implements Stringable
     {
         $this->settled = $settled;
         if ($settled && $this->settlementTime === null) {
-            $this->settlementTime = new \DateTime();
+            $this->settlementTime = new \DateTimeImmutable();
         }
         return $this;
     }
@@ -185,9 +185,6 @@ class DeliveryCost implements Stringable
     {
         $this->remarks = $remarks;
         return $this;
-    }public function getCreatedBy(): ?int
-    {
-        return $this->createdBy;
     }
 
     /**
@@ -204,7 +201,7 @@ class DeliveryCost implements Stringable
 
     /**
      * 计算距离费用
-     * 
+     *
      * 根据距离计算费用，每公里的费率可在调用时指定
      */
     public function calculateDistanceCost(float $ratePerKm = 2.0): self
@@ -221,6 +218,7 @@ class DeliveryCost implements Stringable
     public function markAsSettled(): self
     {
         $this->settled = true;
-        $this->settlementTime = new \DateTime();
+        $this->settlementTime = new \DateTimeImmutable();
         return $this;
-    }}
+    }
+}

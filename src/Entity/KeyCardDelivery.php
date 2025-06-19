@@ -21,7 +21,7 @@ class KeyCardDelivery implements Stringable
     use TimestampableAware;
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::BIGINT)]
+    #[ORM\Column(type: Types::BIGINT, options: ['comment' => 'ID'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne]
@@ -35,8 +35,8 @@ class KeyCardDelivery implements Stringable
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => '房卡数量'])]
     private int $roomCount = 0;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['comment' => '配送时间'])]
-    private ?\DateTimeInterface $deliveryTime = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ['comment' => '配送时间'])]
+    private ?\DateTimeImmutable $deliveryTime = null;
 
     #[ORM\Column(type: Types::STRING, length: 20, enumType: DeliveryStatusEnum::class, options: ['comment' => '配送状态'])]
     private DeliveryStatusEnum $status = DeliveryStatusEnum::PENDING;
@@ -47,11 +47,13 @@ class KeyCardDelivery implements Stringable
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true, options: ['comment' => '交接凭证照片URL'])]
     private ?string $receiptPhotoUrl = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['comment' => '完成时间'])]
-    private ?\DateTimeInterface $completedTime = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '完成时间'])]
+    private ?\DateTimeImmutable $completedTime = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true, options: ['comment' => '备注'])]
-    private ?string $remark = null;public function __toString(): string
+    private ?string $remark = null;
+    
+    public function __toString(): string
     {
         $orderNo = $this->order !== null ? $this->order->getOrderNo() : 'Unknown';
         $hotelName = $this->hotel !== null ? $this->hotel->getName() : 'Unknown';
@@ -97,14 +99,14 @@ class KeyCardDelivery implements Stringable
         return $this;
     }
 
-    public function getDeliveryTime(): ?\DateTimeInterface
+    public function getDeliveryTime(): ?\DateTimeImmutable
     {
         return $this->deliveryTime;
     }
 
     public function setDeliveryTime(?\DateTimeInterface $deliveryTime): self
     {
-        $this->deliveryTime = $deliveryTime;
+        $this->deliveryTime = $deliveryTime instanceof \DateTimeImmutable ? $deliveryTime : ($deliveryTime !== null ? \DateTimeImmutable::createFromInterface($deliveryTime) : null);
         return $this;
     }
 
@@ -141,14 +143,14 @@ class KeyCardDelivery implements Stringable
         return $this;
     }
 
-    public function getCompletedTime(): ?\DateTimeInterface
+    public function getCompletedTime(): ?\DateTimeImmutable
     {
         return $this->completedTime;
     }
 
     public function setCompletedTime(?\DateTimeInterface $completedTime): self
     {
-        $this->completedTime = $completedTime;
+        $this->completedTime = $completedTime instanceof \DateTimeImmutable ? $completedTime : ($completedTime !== null ? \DateTimeImmutable::createFromInterface($completedTime) : null);
         return $this;
     }
 

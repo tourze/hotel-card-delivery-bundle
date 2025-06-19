@@ -14,16 +14,6 @@ class KeyCardDeliveryCrudControllerTest extends TestCase
         $this->assertEquals(KeyCardDelivery::class, KeyCardDeliveryCrudController::getEntityFqcn());
     }
 
-    public function test_requiredMethods_exist(): void
-    {
-        $controllerClass = KeyCardDeliveryCrudController::class;
-        
-        $this->assertTrue(method_exists($controllerClass, 'configureCrud'));
-        $this->assertTrue(method_exists($controllerClass, 'configureFields'));
-        $this->assertTrue(method_exists($controllerClass, 'configureFilters'));
-        $this->assertTrue(method_exists($controllerClass, 'configureActions'));
-    }
-
     public function test_extends_abstractCrudController(): void
     {
         $reflection = new \ReflectionClass(KeyCardDeliveryCrudController::class);

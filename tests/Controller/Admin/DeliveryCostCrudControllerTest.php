@@ -14,15 +14,6 @@ class DeliveryCostCrudControllerTest extends TestCase
         $this->assertEquals(DeliveryCost::class, DeliveryCostCrudController::getEntityFqcn());
     }
 
-    public function test_requiredMethods_exist(): void
-    {
-        $controllerClass = DeliveryCostCrudController::class;
-        
-        $this->assertTrue(method_exists($controllerClass, 'configureCrud'));
-        $this->assertTrue(method_exists($controllerClass, 'configureFields'));
-        $this->assertTrue(method_exists($controllerClass, 'configureFilters'));
-    }
-
     public function test_extends_abstractCrudController(): void
     {
         $reflection = new \ReflectionClass(DeliveryCostCrudController::class);

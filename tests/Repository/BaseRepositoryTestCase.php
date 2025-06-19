@@ -49,7 +49,7 @@ abstract class BaseRepositoryTestCase extends KernelTestCase
         $platform = $connection->getDatabasePlatform();
 
         // 永久禁用外键检查 (对于测试环境)
-        if ($platform instanceof \Doctrine\DBAL\Platforms\SqlitePlatform) {
+        if ($platform instanceof \Doctrine\DBAL\Platforms\SQLitePlatform) {
             $connection->executeStatement('PRAGMA foreign_keys = OFF');
         }
 
