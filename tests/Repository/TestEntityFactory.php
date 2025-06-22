@@ -21,7 +21,7 @@ class TestEntityFactory
 
     /**
      * 创建测试用的 KeyCardDelivery 实体
-     * 
+     *
      * 使用原生 SQL 插入来绕过外键检查
      */
     public function createKeyCardDelivery(array $data = []): KeyCardDelivery
