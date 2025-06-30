@@ -180,7 +180,7 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
     /**
      * 开始配送
      */
-    #[AdminAction('{entityId}/start-delivery', 'start_delivery')]
+    #[AdminAction(routePath: '{entityId}/start-delivery', routeName: 'start_delivery')]
     public function startDelivery(AdminContext $context, Request $request): Response
     {
         /** @var KeyCardDelivery $delivery */
@@ -202,7 +202,7 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
     /**
      * 标记为已完成
      */
-    #[AdminAction('{entityId}/mark-completed', 'mark_completed')]
+    #[AdminAction(routePath: '{entityId}/mark-completed', routeName: 'mark_completed')]
     public function markCompleted(AdminContext $context, Request $request): Response
     {
         /** @var KeyCardDelivery $delivery */
@@ -226,7 +226,7 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
     /**
      * 取消配送
      */
-    #[AdminAction('{entityId}/cancel-delivery', 'cancel_delivery')]
+    #[AdminAction(routePath: '{entityId}/cancel-delivery', routeName: 'cancel_delivery')]
     public function cancelDelivery(AdminContext $context, Request $request): Response
     {
         /** @var KeyCardDelivery $delivery */

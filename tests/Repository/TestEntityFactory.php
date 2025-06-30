@@ -9,7 +9,7 @@ use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
 
 /**
  * 测试实体工厂类
- * 
+ *
  * 为了避免外键依赖问题，我们通过直接插入数据库绕过 Doctrine 的外键检查
  */
 class TestEntityFactory

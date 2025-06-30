@@ -177,7 +177,7 @@ class DeliveryCostCrudController extends AbstractCrudController
     /**
      * 标记为已结算
      */
-    #[AdminAction('{entityId}/mark-settled', 'mark_settled')]
+    #[AdminAction(routePath: '{entityId}/mark-settled', routeName: 'mark_settled')]
     public function markSettled(AdminContext $context, Request $request): Response
     {
         /** @var DeliveryCost $cost */
@@ -199,7 +199,7 @@ class DeliveryCostCrudController extends AbstractCrudController
     /**
      * 取消结算状态
      */
-    #[AdminAction('{entityId}/cancel-settled', 'cancel_settled')]
+    #[AdminAction(routePath: '{entityId}/cancel-settled', routeName: 'cancel_settled')]
     public function cancelSettled(AdminContext $context, Request $request): Response
     {
         /** @var DeliveryCost $cost */
@@ -222,7 +222,7 @@ class DeliveryCostCrudController extends AbstractCrudController
     /**
      * 重新计算距离费用
      */
-    #[AdminAction('{entityId}/recalculate-distance', 'recalculate_distance')]
+    #[AdminAction(routePath: '{entityId}/recalculate-distance', routeName: 'recalculate_distance')]
     public function recalculateDistance(AdminContext $context, Request $request): Response
     {
         /** @var DeliveryCost $cost */

@@ -104,6 +104,6 @@ class DeliveryCostRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
         
-        return (float)($result ?: 0);
+        return (float)($result ?? 0);
     }
 }
