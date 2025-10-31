@@ -35,6 +35,9 @@ enum DeliveryStatusEnum: string implements Labelable, Itemable, Selectable
         };
     }
 
+    /**
+     * @return array<string, self>
+     */
     public static function getChoices(): array
     {
         return [
@@ -49,16 +52,16 @@ enum DeliveryStatusEnum: string implements Labelable, Itemable, Selectable
 
     public function isFinished(): bool
     {
-        return in_array($this, [self::COMPLETED, self::CANCELLED, self::EXCEPTION]);
+        return in_array($this, [self::COMPLETED, self::CANCELLED, self::EXCEPTION], true);
     }
 
     public function canChangeToComplete(): bool
     {
-        return $this === self::IN_PROGRESS;
+        return self::IN_PROGRESS === $this;
     }
 
     public function canCancel(): bool
     {
-        return in_array($this, [self::PENDING, self::ASSIGNED, self::IN_PROGRESS]);
+        return in_array($this, [self::PENDING, self::ASSIGNED, self::IN_PROGRESS], true);
     }
 }

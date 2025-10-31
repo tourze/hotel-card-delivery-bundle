@@ -4,7 +4,6 @@ namespace Tourze\HotelCardDeliveryBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Stringable;
 use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineUserBundle\Traits\CreatedByAware;
@@ -12,8 +11,7 @@ use Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository;
 
 #[ORM\Entity(repositoryClass: DeliveryCostRepository::class)]
 #[ORM\Table(name: 'delivery_cost', options: ['comment' => '房卡配送费用表'])]
-#[ORM\Index(name: 'delivery_cost_idx_delivery', columns: ['delivery_id'])]
-class DeliveryCost implements Stringable
+class DeliveryCost implements \Stringable
 {
     use TimestampableAware;
     use CreatedByAware;
@@ -21,7 +19,7 @@ class DeliveryCost implements Stringable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::BIGINT, options: ['comment' => 'ID'])]
-    private ?int $id = null;
+    private int $id = 0;
 
     #[ORM\ManyToOne(targetEntity: KeyCardDelivery::class)]
     #[ORM\JoinColumn(name: 'delivery_id', referencedColumnName: 'id', nullable: false)]
@@ -29,22 +27,27 @@ class DeliveryCost implements Stringable
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['comment' => '配送基础费用'])]
     #[Assert\PositiveOrZero]
+    #[Assert\Length(max: 255)]
     private string $baseCost = '0.00';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['comment' => '配送距离费用'])]
     #[Assert\PositiveOrZero]
+    #[Assert\Length(max: 255)]
     private string $distanceCost = '0.00';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['comment' => '配送加急费用'])]
     #[Assert\PositiveOrZero]
+    #[Assert\Length(max: 255)]
     private string $urgencyCost = '0.00';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['comment' => '其他额外费用'])]
     #[Assert\PositiveOrZero]
+    #[Assert\Length(max: 255)]
     private string $extraCost = '0.00';
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['comment' => '总费用'])]
     #[Assert\PositiveOrZero]
+    #[Assert\Length(max: 255)]
     private string $totalCost = '0.00';
 
     #[ORM\Column(type: Types::FLOAT, options: ['comment' => '配送距离（公里）'])]
@@ -52,26 +55,29 @@ class DeliveryCost implements Stringable
     private float $distance = 0.0;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '结算时间'])]
+    #[Assert\Type(type: '\DateTimeInterface')]
     private ?\DateTimeImmutable $settlementTime = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['comment' => '是否已结算'])]
+    #[Assert\Type(type: 'bool')]
     private bool $settled = false;
 
     #[ORM\Column(type: Types::TEXT, nullable: true, options: ['comment' => '备注'])]
+    #[Assert\Length(max: 65535)]
     private ?string $remarks = null;
 
     public function __toString(): string
     {
         $orderNo = 'New';
 
-        if ($this->delivery->getOrder() !== null) {
+        if (null !== $this->delivery->getOrder()) {
             $orderNo = $this->delivery->getOrder()->getOrderNo();
         }
 
-        return sprintf('配送费用 #%d - %s', $this->id ?? 0, $orderNo);
+        return sprintf('配送费用 #%d - %s', $this->id, $orderNo);
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -81,10 +87,9 @@ class DeliveryCost implements Stringable
         return $this->delivery;
     }
 
-    public function setDelivery(KeyCardDelivery $delivery): self
+    public function setDelivery(KeyCardDelivery $delivery): void
     {
         $this->delivery = $delivery;
-        return $this;
     }
 
     public function getBaseCost(): string
@@ -92,11 +97,10 @@ class DeliveryCost implements Stringable
         return $this->baseCost;
     }
 
-    public function setBaseCost(string $baseCost): self
+    public function setBaseCost(string $baseCost): void
     {
         $this->baseCost = $baseCost;
         $this->calculateTotalCost();
-        return $this;
     }
 
     public function getDistanceCost(): string
@@ -104,11 +108,10 @@ class DeliveryCost implements Stringable
         return $this->distanceCost;
     }
 
-    public function setDistanceCost(string $distanceCost): self
+    public function setDistanceCost(string $distanceCost): void
     {
         $this->distanceCost = $distanceCost;
         $this->calculateTotalCost();
-        return $this;
     }
 
     public function getUrgencyCost(): string
@@ -116,11 +119,10 @@ class DeliveryCost implements Stringable
         return $this->urgencyCost;
     }
 
-    public function setUrgencyCost(string $urgencyCost): self
+    public function setUrgencyCost(string $urgencyCost): void
     {
         $this->urgencyCost = $urgencyCost;
         $this->calculateTotalCost();
-        return $this;
     }
 
     public function getExtraCost(): string
@@ -128,11 +130,10 @@ class DeliveryCost implements Stringable
         return $this->extraCost;
     }
 
-    public function setExtraCost(string $extraCost): self
+    public function setExtraCost(string $extraCost): void
     {
         $this->extraCost = $extraCost;
         $this->calculateTotalCost();
-        return $this;
     }
 
     public function getTotalCost(): string
@@ -145,10 +146,9 @@ class DeliveryCost implements Stringable
         return $this->distance;
     }
 
-    public function setDistance(float $distance): self
+    public function setDistance(float $distance): void
     {
         $this->distance = $distance;
-        return $this;
     }
 
     public function getSettlementTime(): ?\DateTimeImmutable
@@ -156,10 +156,9 @@ class DeliveryCost implements Stringable
         return $this->settlementTime;
     }
 
-    public function setSettlementTime(?\DateTimeInterface $settlementTime): self
+    public function setSettlementTime(?\DateTimeInterface $settlementTime): void
     {
-        $this->settlementTime = $settlementTime instanceof \DateTimeImmutable ? $settlementTime : ($settlementTime !== null ? \DateTimeImmutable::createFromInterface($settlementTime) : null);
-        return $this;
+        $this->settlementTime = $settlementTime instanceof \DateTimeImmutable ? $settlementTime : (null !== $settlementTime ? \DateTimeImmutable::createFromInterface($settlementTime) : null);
     }
 
     public function isSettled(): bool
@@ -167,13 +166,12 @@ class DeliveryCost implements Stringable
         return $this->settled;
     }
 
-    public function setSettled(bool $settled): self
+    public function setSettled(bool $settled): void
     {
         $this->settled = $settled;
-        if ($settled && $this->settlementTime === null) {
+        if ($settled && null === $this->settlementTime) {
             $this->settlementTime = new \DateTimeImmutable();
         }
-        return $this;
     }
 
     public function getRemarks(): ?string
@@ -181,10 +179,9 @@ class DeliveryCost implements Stringable
         return $this->remarks;
     }
 
-    public function setRemarks(?string $remarks): self
+    public function setRemarks(?string $remarks): void
     {
         $this->remarks = $remarks;
-        return $this;
     }
 
     /**
@@ -192,11 +189,11 @@ class DeliveryCost implements Stringable
      */
     private function calculateTotalCost(): void
     {
-        $total = (float)$this->baseCost +
-            (float)$this->distanceCost +
-            (float)$this->urgencyCost +
-            (float)$this->extraCost;
-        $this->totalCost = (string)round($total, 2);
+        $total = (float) $this->baseCost +
+            (float) $this->distanceCost +
+            (float) $this->urgencyCost +
+            (float) $this->extraCost;
+        $this->totalCost = number_format(round($total, 2), 2, '.', '');
     }
 
     /**
@@ -207,8 +204,9 @@ class DeliveryCost implements Stringable
     public function calculateDistanceCost(float $ratePerKm = 2.0): self
     {
         $distanceCost = round($this->distance * $ratePerKm, 2);
-        $this->distanceCost = (string)$distanceCost;
+        $this->distanceCost = number_format($distanceCost, 2, '.', '');
         $this->calculateTotalCost();
+
         return $this;
     }
 
@@ -219,6 +217,7 @@ class DeliveryCost implements Stringable
     {
         $this->settled = true;
         $this->settlementTime = new \DateTimeImmutable();
+
         return $this;
     }
 }

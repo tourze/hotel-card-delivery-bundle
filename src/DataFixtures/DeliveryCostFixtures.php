@@ -5,6 +5,7 @@ namespace Tourze\HotelCardDeliveryBundle\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use Tourze\HotelAgentBundle\DataFixtures\OrderFixtures;
 use Tourze\HotelCardDeliveryBundle\Entity\DeliveryCost;
 use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
@@ -13,6 +14,8 @@ use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
  * 配送费用数据填充
  * 创建测试用的配送费用数据，包括不同计费方式和结算状态
  */
+#[When(env: 'test')]
+#[When(env: 'dev')]
 class DeliveryCostFixtures extends Fixture implements DependentFixtureInterface
 {
     // 引用名称常量

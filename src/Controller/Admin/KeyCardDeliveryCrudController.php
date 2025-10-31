@@ -4,6 +4,7 @@ namespace Tourze\HotelCardDeliveryBundle\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminAction;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -25,10 +26,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Tourze\HotelAgentBundle\Entity\Order;
 use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
 use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
+use Tourze\HotelProfileBundle\Entity\Hotel;
 
-class KeyCardDeliveryCrudController extends AbstractCrudController
+/**
+ * @extends AbstractCrudController<KeyCardDelivery>
+ */
+#[AdminCrud(routePath: '/hotel-card-delivery/key-card-delivery', routeName: 'hotel_card_delivery_key_card_delivery')]
+final class KeyCardDeliveryCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly AdminUrlGenerator $adminUrlGenerator,
@@ -52,35 +59,41 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
             ->setPageTitle('new', '新建房卡配送任务')
             ->setHelp('index', '管理酒店房卡配送任务，包括配送状态跟踪和费用管理')
             ->setDefaultSort(['id' => 'DESC'])
-            ->setSearchFields(['id', 'order.orderNo', 'hotel.name', 'remark']);
+            ->setSearchFields(['id', 'order.orderNo', 'hotel.name', 'remark'])
+        ;
     }
 
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id', 'ID')
             ->setMaxLength(9999)
-            ->onlyOnIndex();
+            ->onlyOnIndex()
+        ;
 
         yield AssociationField::new('order', '订单')
             ->setRequired(true)
             ->formatValue(function ($value) {
-                return $value ? $value->getOrderNo() : '';
-            });
+                return ($value instanceof Order) ? $value->getOrderNo() : '';
+            })
+        ;
 
         yield AssociationField::new('hotel', '酒店')
             ->setRequired(true)
             ->formatValue(function ($value) {
-                return $value ? $value->getName() : '';
-            });
+                return ($value instanceof Hotel) ? $value->getName() : '';
+            })
+        ;
 
         yield IntegerField::new('roomCount', '房卡数量')
             ->setRequired(true)
-            ->setHelp('需要配送的房卡数量');
+            ->setHelp('需要配送的房卡数量')
+        ;
 
         yield DateTimeField::new('deliveryTime', '配送时间')
             ->setRequired(true)
             ->setFormat('yyyy-MM-dd HH:mm')
-            ->setHelp('计划配送时间');
+            ->setHelp('计划配送时间')
+        ;
 
         yield ChoiceField::new('status', '配送状态')
             ->setFormType(EnumType::class)
@@ -88,34 +101,41 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
             ->formatValue(function ($value) {
                 return $value instanceof DeliveryStatusEnum ? $value->getLabel() : '';
             })
-            ->setRequired(true);
+            ->setRequired(true)
+        ;
 
         yield MoneyField::new('fee', '配送费用')
             ->setCurrency('CNY')
             ->setStoredAsCents(false)
-            ->setNumDecimals(2);
+            ->setNumDecimals(2)
+        ;
 
         yield ImageField::new('receiptPhotoUrl', '交接凭证照片')
             ->setBasePath('/uploads/receipts/')
             ->setUploadDir('public/uploads/receipts')
             ->setUploadedFileNamePattern('[randomhash].[extension]')
-            ->onlyOnForms();
+            ->onlyOnForms()
+        ;
 
         yield DateTimeField::new('completedTime', '完成时间')
             ->setFormat('yyyy-MM-dd HH:mm')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
 
         yield TextareaField::new('remark', '备注')
             ->setNumOfRows(3)
-            ->onlyOnForms();
+            ->onlyOnForms()
+        ;
 
         yield DateTimeField::new('createTime', '创建时间')
             ->setFormat('yyyy-MM-dd HH:mm')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
 
         yield DateTimeField::new('updateTime', '更新时间')
             ->setFormat('yyyy-MM-dd HH:mm')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -130,7 +150,8 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
             ->add(EntityFilter::new('hotel', '酒店'))
             ->add(ChoiceFilter::new('status', '配送状态')->setChoices($statusChoices))
             ->add(DateTimeFilter::new('deliveryTime', '配送时间'))
-            ->add(DateTimeFilter::new('completedTime', '完成时间'));
+            ->add(DateTimeFilter::new('completedTime', '完成时间'))
+        ;
     }
 
     public function configureActions(Actions $actions): Actions
@@ -142,7 +163,8 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
             ->setIcon('fa fa-play')
             ->displayIf(function (KeyCardDelivery $entity) {
                 return $entity->canStartDelivery();
-            });
+            })
+        ;
 
         // 标记完成操作
         $markCompleted = Action::new('markCompleted', '标记完成')
@@ -150,8 +172,9 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
             ->setCssClass('btn btn-primary')
             ->setIcon('fa fa-check')
             ->displayIf(function (KeyCardDelivery $entity) {
-                return $entity->getStatus() === DeliveryStatusEnum::IN_PROGRESS;
-            });
+                return DeliveryStatusEnum::IN_PROGRESS === $entity->getStatus();
+            })
+        ;
 
         // 取消配送操作
         $cancelDelivery = Action::new('cancelDelivery', '取消配送')
@@ -162,9 +185,10 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
                 return in_array($entity->getStatus(), [
                     DeliveryStatusEnum::PENDING,
                     DeliveryStatusEnum::ASSIGNED,
-                    DeliveryStatusEnum::IN_PROGRESS
-                ]);
-            });
+                    DeliveryStatusEnum::IN_PROGRESS,
+                ], true);
+            })
+        ;
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
@@ -174,7 +198,8 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $startDelivery)
             ->add(Crud::PAGE_DETAIL, $markCompleted)
             ->add(Crud::PAGE_DETAIL, $cancelDelivery)
-            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, 'startDelivery', 'markCompleted', 'cancelDelivery', Action::DELETE]);
+            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, 'startDelivery', 'markCompleted', 'cancelDelivery'])
+        ;
     }
 
     /**
@@ -183,11 +208,12 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
     #[AdminAction(routePath: '{entityId}/start-delivery', routeName: 'start_delivery')]
     public function startDelivery(AdminContext $context, Request $request): Response
     {
-        /** @var KeyCardDelivery $delivery */
         $delivery = $context->getEntity()->getInstance();
+        assert($delivery instanceof KeyCardDelivery);
 
         if (!$delivery->canStartDelivery()) {
             $this->addFlash('danger', '当前状态不允许开始配送');
+
             return $this->redirect($this->getIndexUrl());
         }
 
@@ -205,11 +231,12 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
     #[AdminAction(routePath: '{entityId}/mark-completed', routeName: 'mark_completed')]
     public function markCompleted(AdminContext $context, Request $request): Response
     {
-        /** @var KeyCardDelivery $delivery */
         $delivery = $context->getEntity()->getInstance();
+        assert($delivery instanceof KeyCardDelivery);
 
-        if ($delivery->getStatus() !== DeliveryStatusEnum::IN_PROGRESS) {
+        if (DeliveryStatusEnum::IN_PROGRESS !== $delivery->getStatus()) {
             $this->addFlash('danger', '只有配送中的任务才能标记为完成');
+
             return $this->redirect($this->getIndexUrl());
         }
 
@@ -229,15 +256,16 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
     #[AdminAction(routePath: '{entityId}/cancel-delivery', routeName: 'cancel_delivery')]
     public function cancelDelivery(AdminContext $context, Request $request): Response
     {
-        /** @var KeyCardDelivery $delivery */
         $delivery = $context->getEntity()->getInstance();
+        assert($delivery instanceof KeyCardDelivery);
 
         if (!in_array($delivery->getStatus(), [
             DeliveryStatusEnum::PENDING,
             DeliveryStatusEnum::ASSIGNED,
-            DeliveryStatusEnum::IN_PROGRESS
-        ])) {
+            DeliveryStatusEnum::IN_PROGRESS,
+        ], true)) {
             $this->addFlash('danger', '当前状态不允许取消配送');
+
             return $this->redirect($this->getIndexUrl());
         }
 
@@ -255,6 +283,7 @@ class KeyCardDeliveryCrudController extends AbstractCrudController
         return $this->adminUrlGenerator
             ->setController(self::class)
             ->setAction(Action::INDEX)
-            ->generateUrl();
+            ->generateUrl()
+        ;
     }
-} 
+}

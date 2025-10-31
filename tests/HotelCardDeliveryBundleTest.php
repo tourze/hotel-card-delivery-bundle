@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tourze\HotelCardDeliveryBundle\Tests;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\HotelCardDeliveryBundle\HotelCardDeliveryBundle;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractBundleTestCase;
 
-class HotelCardDeliveryBundleTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(HotelCardDeliveryBundle::class)]
+#[RunTestsInSeparateProcesses]
+final class HotelCardDeliveryBundleTest extends AbstractBundleTestCase
 {
-    public function test_getPath_returnsCorrectPath(): void
-    {
-        $bundle = new HotelCardDeliveryBundle();
-        $expectedPath = dirname(__DIR__) . '/src';
-
-        $this->assertEquals($expectedPath, $bundle->getPath());
-    }
 }

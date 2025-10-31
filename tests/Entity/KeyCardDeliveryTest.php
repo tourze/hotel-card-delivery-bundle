@@ -2,13 +2,23 @@
 
 namespace Tourze\HotelCardDeliveryBundle\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
 use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class KeyCardDeliveryTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(KeyCardDelivery::class)]
+final class KeyCardDeliveryTest extends AbstractEntityTestCase
 {
-    public function test_constructor_setsDefaultValues(): void
+    protected function createEntity(): object
+    {
+        return new KeyCardDelivery();
+    }
+
+    public function testConstructorSetsDefaultValues(): void
     {
         $delivery = new KeyCardDelivery();
 
@@ -21,7 +31,7 @@ class KeyCardDeliveryTest extends TestCase
         $this->assertNull($delivery->getRemark());
     }
 
-    public function test_settersAndGetters_workCorrectly(): void
+    public function testSettersAndGettersWorkCorrectly(): void
     {
         $delivery = new KeyCardDelivery();
 
@@ -54,7 +64,7 @@ class KeyCardDeliveryTest extends TestCase
         $this->assertEquals($remark, $delivery->getRemark());
     }
 
-    public function test_statusTransitionMethods_workCorrectly(): void
+    public function testStatusTransitionMethodsWorkCorrectly(): void
     {
         $delivery = new KeyCardDelivery();
 
@@ -77,17 +87,17 @@ class KeyCardDeliveryTest extends TestCase
         $cancelReason = 'Customer cancelled';
         $delivery->markAsCancelled($cancelReason);
         $this->assertEquals(DeliveryStatusEnum::CANCELLED, $delivery->getStatus());
-        $this->assertStringContainsString($cancelReason, $delivery->getRemark());
+        $this->assertStringContainsString($cancelReason, $delivery->getRemark() ?? '');
 
         // Reset and test exception
         $delivery = new KeyCardDelivery();
         $exceptionReason = 'Address not found';
         $delivery->markAsException($exceptionReason);
         $this->assertEquals(DeliveryStatusEnum::EXCEPTION, $delivery->getStatus());
-        $this->assertStringContainsString($exceptionReason, $delivery->getRemark());
+        $this->assertStringContainsString($exceptionReason, $delivery->getRemark() ?? '');
     }
 
-    public function test_statusCheckMethods_returnCorrectValues(): void
+    public function testStatusCheckMethodsReturnCorrectValues(): void
     {
         $delivery = new KeyCardDelivery();
 
@@ -113,7 +123,7 @@ class KeyCardDeliveryTest extends TestCase
         $this->assertTrue($delivery->isCancelled());
     }
 
-    public function test_calculateFee_returnsCorrectValue(): void
+    public function testCalculateFeeReturnsCorrectValue(): void
     {
         $delivery = new KeyCardDelivery();
 
@@ -133,14 +143,14 @@ class KeyCardDeliveryTest extends TestCase
         $this->assertEquals('0', $delivery->getFee());
     }
 
-    public function test_status_transitions_withRemarks(): void
+    public function testStatusTransitionsWithRemarks(): void
     {
         $delivery = new KeyCardDelivery();
 
         // Test markAsCancelled adds remark
         $cancelReason = 'Customer request';
         $delivery->markAsCancelled($cancelReason);
-        $this->assertStringContainsString($cancelReason, $delivery->getRemark());
+        $this->assertStringContainsString($cancelReason, $delivery->getRemark() ?? '');
         $this->assertEquals($cancelReason, $delivery->getRemark());
 
         // Test markAsException adds remark
@@ -150,13 +160,28 @@ class KeyCardDeliveryTest extends TestCase
         $this->assertEquals($exceptionReason, $delivery2->getRemark());
     }
 
-    public function test_toString_returnsExpectedFormat(): void
+    public function testToStringReturnsExpectedFormat(): void
     {
         $delivery = new KeyCardDelivery();
-        
+
         // Without order and hotel - shows 'Unknown'
         $this->assertEquals('房卡配送: Unknown - Unknown', (string) $delivery);
-        
+
         // Note: To test with actual order and hotel would require mocking external entities
+    }
+
+    /**
+     * @return iterable<array{string, mixed}>
+     */
+    public static function propertiesProvider(): iterable
+    {
+        return [
+            'roomCount' => ['roomCount', 5],
+            'fee' => ['fee', '25.50'],
+            'deliveryTime' => ['deliveryTime', new \DateTimeImmutable('2024-01-20 14:00:00')],
+            'completedTime' => ['completedTime', new \DateTimeImmutable('2024-01-20 15:00:00')],
+            'receiptPhotoUrl' => ['receiptPhotoUrl', 'https://example.com/receipt.jpg'],
+            'remark' => ['remark', 'Special delivery instructions'],
+        ];
     }
 }

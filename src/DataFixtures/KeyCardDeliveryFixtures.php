@@ -5,16 +5,20 @@ namespace Tourze\HotelCardDeliveryBundle\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\Attribute\When;
 use Tourze\HotelAgentBundle\DataFixtures\OrderFixtures;
 use Tourze\HotelAgentBundle\Entity\Order;
 use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
 use Tourze\HotelCardDeliveryBundle\Enum\DeliveryStatusEnum;
+use Tourze\HotelProfileBundle\DataFixtures\HotelFixtures;
 use Tourze\HotelProfileBundle\Entity\Hotel;
 
 /**
  * 房卡配送任务数据填充
  * 创建测试用的房卡配送任务数据，包括不同状态的配送任务
  */
+#[When(env: 'test')]
+#[When(env: 'dev')]
 class KeyCardDeliveryFixtures extends Fixture implements DependentFixtureInterface
 {
     // 引用名称常量
@@ -28,9 +32,9 @@ class KeyCardDeliveryFixtures extends Fixture implements DependentFixtureInterfa
     {
         // 获取订单和酒店引用
         $sampleOrder = $this->getReference(OrderFixtures::ORDER_CONFIRMED_REFERENCE, Order::class);
-        $sampleHotel = $this->getReference(OrderFixtures::HOTEL_SAMPLE_REFERENCE, Hotel::class);
-        $businessHotel = $this->getReference(OrderFixtures::HOTEL_BUSINESS_REFERENCE, Hotel::class);
-        $luxuryHotel = $this->getReference(OrderFixtures::HOTEL_LUXURY_REFERENCE, Hotel::class);
+        $sampleHotel = $this->getReference(HotelFixtures::BUDGET_HOTEL_REFERENCE, Hotel::class);
+        $businessHotel = $this->getReference(HotelFixtures::BUSINESS_HOTEL_REFERENCE, Hotel::class);
+        $luxuryHotel = $this->getReference(HotelFixtures::LUXURY_HOTEL_REFERENCE, Hotel::class);
 
         // 创建待分配的配送任务
         $pendingDelivery = new KeyCardDelivery();
@@ -116,6 +120,7 @@ class KeyCardDeliveryFixtures extends Fixture implements DependentFixtureInterfa
     {
         return [
             OrderFixtures::class,
+            HotelFixtures::class,
         ];
     }
 }

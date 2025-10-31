@@ -2,45 +2,34 @@
 
 namespace Tourze\HotelCardDeliveryBundle\Tests\DependencyInjection;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Tourze\HotelCardDeliveryBundle\DependencyInjection\HotelCardDeliveryExtension;
+use Tourze\PHPUnitSymfonyUnitTest\AbstractDependencyInjectionExtensionTestCase;
 
-class HotelCardDeliveryExtensionTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(HotelCardDeliveryExtension::class)]
+final class HotelCardDeliveryExtensionTest extends AbstractDependencyInjectionExtensionTestCase
 {
-    public function test_load_registersExpectedServices(): void
+    public function testBundleCanBeLoaded(): void
     {
         $container = new ContainerBuilder();
-        $extension = new HotelCardDeliveryExtension();
+        $container->setParameter('kernel.environment', 'test');
 
+        $extension = new HotelCardDeliveryExtension();
         $extension->load([], $container);
 
-        // Check that repositories are registered
-        $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository'));
-        $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\Repository\KeyCardDeliveryRepository'));
-
-        // Check that admin controllers are registered
+        // 验证服务配置已正确加载
         $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\Controller\Admin\DeliveryCostCrudController'));
         $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\Controller\Admin\KeyCardDeliveryCrudController'));
-
-        // Check that menu service is registered
+        $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository'));
+        $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\Repository\KeyCardDeliveryRepository'));
         $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\Service\AdminMenu'));
-    }
 
-    public function test_load_configuresServicesCorrectly(): void
-    {
-        $container = new ContainerBuilder();
-        $extension = new HotelCardDeliveryExtension();
-
-        $extension->load([], $container);
-
-        // Check that services are configured with autowire and autoconfigure
-        $deliveryCostRepoDefinition = $container->getDefinition('Tourze\HotelCardDeliveryBundle\Repository\DeliveryCostRepository');
-        $this->assertTrue($deliveryCostRepoDefinition->isAutowired());
-        $this->assertTrue($deliveryCostRepoDefinition->isAutoconfigured());
-
-        $keyCardRepoDefinition = $container->getDefinition('Tourze\HotelCardDeliveryBundle\Repository\KeyCardDeliveryRepository');
-        $this->assertTrue($keyCardRepoDefinition->isAutowired());
-        $this->assertTrue($keyCardRepoDefinition->isAutoconfigured());
+        // 验证测试环境服务已正确加载
+        $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\DataFixtures\KeyCardDeliveryFixtures'));
+        $this->assertTrue($container->hasDefinition('Tourze\HotelCardDeliveryBundle\DataFixtures\DeliveryCostFixtures'));
     }
 }

@@ -4,6 +4,7 @@ namespace Tourze\HotelCardDeliveryBundle\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminAction;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -25,8 +26,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tourze\HotelCardDeliveryBundle\Entity\DeliveryCost;
+use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
 
-class DeliveryCostCrudController extends AbstractCrudController
+/**
+ * @extends AbstractCrudController<DeliveryCost>
+ */
+#[AdminCrud(routePath: '/hotel-card-delivery/delivery-cost', routeName: 'hotel_card_delivery_delivery_cost')]
+final class DeliveryCostCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly AdminUrlGenerator $adminUrlGenerator,
@@ -50,80 +56,97 @@ class DeliveryCostCrudController extends AbstractCrudController
             ->setPageTitle('new', '新建配送费用')
             ->setHelp('index', '管理房卡配送费用，包括基础费用、距离费用、加急费用等')
             ->setDefaultSort(['id' => 'DESC'])
-            ->setSearchFields(['id', 'delivery.order.orderNo', 'remarks']);
+            ->setSearchFields(['id', 'delivery.order.orderNo', 'remarks'])
+        ;
     }
 
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id', 'ID')
             ->setMaxLength(9999)
-            ->onlyOnIndex();
+            ->onlyOnIndex()
+        ;
 
         yield AssociationField::new('delivery', '配送任务')
             ->setRequired(true)
             ->formatValue(function ($value) {
-                if (!$value) return '';
+                if (!$value instanceof KeyCardDelivery) {
+                    return '';
+                }
                 $order = $value->getOrder();
                 $hotel = $value->getHotel();
-                return sprintf('%s - %s', 
-                    $order ? $order->getOrderNo() : 'Unknown',
-                    $hotel ? $hotel->getName() : 'Unknown'
+
+                return sprintf('%s - %s',
+                    null !== $order ? $order->getOrderNo() : 'Unknown',
+                    null !== $hotel ? $hotel->getName() : 'Unknown'
                 );
-            });
+            })
+        ;
 
         yield MoneyField::new('baseCost', '基础费用')
             ->setCurrency('CNY')
             ->setStoredAsCents(false)
             ->setNumDecimals(2)
-            ->setHelp('配送基础费用');
+            ->setHelp('配送基础费用')
+        ;
 
         yield NumberField::new('distance', '配送距离')
             ->setNumDecimals(2)
-            ->setHelp('配送距离（公里）');
+            ->setHelp('配送距离（公里）')
+        ;
 
         yield MoneyField::new('distanceCost', '距离费用')
             ->setCurrency('CNY')
             ->setStoredAsCents(false)
             ->setNumDecimals(2)
-            ->setHelp('基于距离计算的费用');
+            ->setHelp('基于距离计算的费用')
+        ;
 
         yield MoneyField::new('urgencyCost', '加急费用')
             ->setCurrency('CNY')
             ->setStoredAsCents(false)
             ->setNumDecimals(2)
-            ->setHelp('加急配送产生的额外费用');
+            ->setHelp('加急配送产生的额外费用')
+        ;
 
         yield MoneyField::new('extraCost', '其他费用')
             ->setCurrency('CNY')
             ->setStoredAsCents(false)
             ->setNumDecimals(2)
-            ->setHelp('其他额外费用');
+            ->setHelp('其他额外费用')
+        ;
 
         yield MoneyField::new('totalCost', '总费用')
             ->setCurrency('CNY')
             ->setStoredAsCents(false)
             ->setNumDecimals(2)
             ->setHelp('配送总费用（自动计算）')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
 
         yield BooleanField::new('settled', '已结算')
-            ->setHelp('是否已完成结算');
+            ->setHelp('是否已完成结算')
+        ;
 
         yield DateTimeField::new('settlementTime', '结算时间')
             ->setFormat('yyyy-MM-dd HH:mm')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
 
         yield TextareaField::new('remarks', '备注')
             ->setNumOfRows(3)
-            ->onlyOnForms();
+            ->onlyOnForms()
+        ;
 
         yield DateTimeField::new('createTime', '创建时间')
             ->setFormat('yyyy-MM-dd HH:mm')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
 
         yield DateTimeField::new('updateTime', '更新时间')
             ->setFormat('yyyy-MM-dd HH:mm')
-            ->hideOnForm();
+            ->hideOnForm()
+        ;
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -134,7 +157,8 @@ class DeliveryCostCrudController extends AbstractCrudController
             ->add(NumericFilter::new('totalCost', '总费用'))
             ->add(NumericFilter::new('distance', '配送距离'))
             ->add(DateTimeFilter::new('settlementTime', '结算时间'))
-            ->add(DateTimeFilter::new('createTime', '创建时间'));
+            ->add(DateTimeFilter::new('createTime', '创建时间'))
+        ;
     }
 
     public function configureActions(Actions $actions): Actions
@@ -146,7 +170,8 @@ class DeliveryCostCrudController extends AbstractCrudController
             ->setIcon('fa fa-check-circle')
             ->displayIf(function (DeliveryCost $entity) {
                 return !$entity->isSettled();
-            });
+            })
+        ;
 
         // 取消结算操作
         $cancelSettled = Action::new('cancelSettled', '取消结算')
@@ -155,13 +180,15 @@ class DeliveryCostCrudController extends AbstractCrudController
             ->setIcon('fa fa-undo')
             ->displayIf(function (DeliveryCost $entity) {
                 return $entity->isSettled();
-            });
+            })
+        ;
 
         // 重新计算距离费用操作
         $recalculateDistance = Action::new('recalculateDistance', '重算距离费用')
             ->linkToCrudAction('recalculateDistance')
             ->setCssClass('btn btn-info')
-            ->setIcon('fa fa-calculator');
+            ->setIcon('fa fa-calculator')
+        ;
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
@@ -171,7 +198,8 @@ class DeliveryCostCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $markSettled)
             ->add(Crud::PAGE_DETAIL, $cancelSettled)
             ->add(Crud::PAGE_DETAIL, $recalculateDistance)
-            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, Action::EDIT, 'markSettled', 'cancelSettled', 'recalculateDistance', Action::DELETE]);
+            ->reorder(Crud::PAGE_INDEX, [Action::DETAIL, 'markSettled', 'cancelSettled', 'recalculateDistance'])
+        ;
     }
 
     /**
@@ -180,11 +208,12 @@ class DeliveryCostCrudController extends AbstractCrudController
     #[AdminAction(routePath: '{entityId}/mark-settled', routeName: 'mark_settled')]
     public function markSettled(AdminContext $context, Request $request): Response
     {
-        /** @var DeliveryCost $cost */
         $cost = $context->getEntity()->getInstance();
+        assert($cost instanceof DeliveryCost);
 
         if ($cost->isSettled()) {
             $this->addFlash('warning', '该费用已经结算');
+
             return $this->redirect($this->getIndexUrl());
         }
 
@@ -202,11 +231,12 @@ class DeliveryCostCrudController extends AbstractCrudController
     #[AdminAction(routePath: '{entityId}/cancel-settled', routeName: 'cancel_settled')]
     public function cancelSettled(AdminContext $context, Request $request): Response
     {
-        /** @var DeliveryCost $cost */
         $cost = $context->getEntity()->getInstance();
+        assert($cost instanceof DeliveryCost);
 
         if (!$cost->isSettled()) {
             $this->addFlash('warning', '该费用尚未结算');
+
             return $this->redirect($this->getIndexUrl());
         }
 
@@ -225,8 +255,8 @@ class DeliveryCostCrudController extends AbstractCrudController
     #[AdminAction(routePath: '{entityId}/recalculate-distance', routeName: 'recalculate_distance')]
     public function recalculateDistance(AdminContext $context, Request $request): Response
     {
-        /** @var DeliveryCost $cost */
         $cost = $context->getEntity()->getInstance();
+        assert($cost instanceof DeliveryCost);
 
         // 使用默认的每公里2元费率重新计算
         $cost->calculateDistanceCost(2.0);
@@ -242,6 +272,7 @@ class DeliveryCostCrudController extends AbstractCrudController
         return $this->adminUrlGenerator
             ->setController(self::class)
             ->setAction(Action::INDEX)
-            ->generateUrl();
+            ->generateUrl()
+        ;
     }
-} 
+}

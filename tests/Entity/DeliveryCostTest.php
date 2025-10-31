@@ -2,13 +2,23 @@
 
 namespace Tourze\HotelCardDeliveryBundle\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tourze\HotelCardDeliveryBundle\Entity\DeliveryCost;
 use Tourze\HotelCardDeliveryBundle\Entity\KeyCardDelivery;
+use Tourze\PHPUnitDoctrineEntity\AbstractEntityTestCase;
 
-class DeliveryCostTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(DeliveryCost::class)]
+final class DeliveryCostTest extends AbstractEntityTestCase
 {
-    public function test_constructor_setsDefaultValues(): void
+    protected function createEntity(): object
+    {
+        return new DeliveryCost();
+    }
+
+    public function testConstructorSetsDefaultValues(): void
     {
         $deliveryCost = new DeliveryCost();
 
@@ -22,7 +32,7 @@ class DeliveryCostTest extends TestCase
         $this->assertNull($deliveryCost->getSettlementTime());
     }
 
-    public function test_settersAndGetters_workCorrectly(): void
+    public function testSettersAndGettersWorkCorrectly(): void
     {
         $deliveryCost = new DeliveryCost();
         $delivery = new KeyCardDelivery();
@@ -43,7 +53,7 @@ class DeliveryCostTest extends TestCase
 
         $deliveryCost->setExtraCost('1.75');
         $this->assertEquals('1.75', $deliveryCost->getExtraCost());
-        
+
         // Test distance setter
         $deliveryCost->setDistance(15.5);
         $this->assertEquals(15.5, $deliveryCost->getDistance());
@@ -58,54 +68,54 @@ class DeliveryCostTest extends TestCase
         $this->assertEquals($remarks, $deliveryCost->getRemarks());
     }
 
-    public function test_setters_automaticallyCalculateTotalCost(): void
+    public function testSettersAutomaticallyCalculateTotalCost(): void
     {
         $deliveryCost = new DeliveryCost();
-        
+
         $deliveryCost->setBaseCost('10.00');
         $deliveryCost->setDistanceCost('5.00');
         $deliveryCost->setUrgencyCost('3.00');
         $deliveryCost->setExtraCost('2.00');
 
         // Total should be automatically calculated when setting costs
-        $this->assertEquals('20', $deliveryCost->getTotalCost());
+        $this->assertEquals('20.00', $deliveryCost->getTotalCost());
     }
 
-    public function test_calculateDistanceCost_returnsCorrectValue(): void
+    public function testCalculateDistanceCostReturnsCorrectValue(): void
     {
         $deliveryCost = new DeliveryCost();
         $delivery = new KeyCardDelivery();
         $deliveryCost->setDelivery($delivery);
-        
+
         $deliveryCost->setDistance(10.0);
-        
+
         // Test with default rate (2.0)
         $deliveryCost->calculateDistanceCost();
-        $this->assertEquals('20', $deliveryCost->getDistanceCost());
-        
+        $this->assertEquals('20.00', $deliveryCost->getDistanceCost());
+
         // Test with custom rate
         $deliveryCost->calculateDistanceCost(3.0);
-        $this->assertEquals('30', $deliveryCost->getDistanceCost());
+        $this->assertEquals('30.00', $deliveryCost->getDistanceCost());
     }
 
-    public function test_markAsSettled_setsSettlementTime(): void
+    public function testMarkAsSettledSetsSettlementTime(): void
     {
         $deliveryCost = new DeliveryCost();
-        
+
         // Initially not settled
         $this->assertFalse($deliveryCost->isSettled());
         $this->assertNull($deliveryCost->getSettlementTime());
-        
+
         // Mark as settled
         $deliveryCost->markAsSettled();
-        
+
         // Should be settled with settlement time
         $this->assertTrue($deliveryCost->isSettled());
         $this->assertNotNull($deliveryCost->getSettlementTime());
         $this->assertInstanceOf(\DateTimeInterface::class, $deliveryCost->getSettlementTime());
     }
 
-    public function test_toString_returnsExpectedFormat(): void
+    public function testToStringReturnsExpectedFormat(): void
     {
         $deliveryCost = new DeliveryCost();
         $deliveryCost->setBaseCost('10.00');
@@ -114,8 +124,24 @@ class DeliveryCostTest extends TestCase
         // Test with associated delivery
         $delivery = new KeyCardDelivery();
         $deliveryCost->setDelivery($delivery);
-        
+
         $expectedString = '配送费用 #0 - New';
         $this->assertEquals($expectedString, (string) $deliveryCost);
+    }
+
+    /**
+     * @return iterable<array{string, mixed}>
+     */
+    public static function propertiesProvider(): iterable
+    {
+        return [
+            'baseCost' => ['baseCost', '10.50'],
+            'distanceCost' => ['distanceCost', '5.25'],
+            'urgencyCost' => ['urgencyCost', '3.00'],
+            'extraCost' => ['extraCost', '1.75'],
+            'distance' => ['distance', 15.5],
+            'settled' => ['settled', true],
+            'remarks' => ['remarks', 'Test remarks'],
+        ];
     }
 }
