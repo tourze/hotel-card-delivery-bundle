@@ -92,8 +92,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testIndexPageDisplaysCorrectly(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin/hotel-card-delivery/delivery-cost');
 
@@ -105,8 +104,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testNewFormDisplaysCorrectFields(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin/hotel-card-delivery/delivery-cost?crudAction=new');
 
@@ -119,8 +117,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testValidationErrorsOnRequiredFields(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin/hotel-card-delivery/delivery-cost?crudAction=new');
 
@@ -140,8 +137,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
      */
     public function testValidationErrors(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin/hotel-card-delivery/delivery-cost?crudAction=new');
 
@@ -196,8 +192,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testSearchFunctionality(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         // 创建测试数据
         $deliveryCost = $this->createTestDeliveryCost();
@@ -215,8 +210,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testCreateNewDeliveryCost(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $delivery = $this->createTestDelivery();
 
@@ -256,8 +250,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testEditExistingDeliveryCost(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $deliveryCost = $this->createTestDeliveryCost();
 
@@ -280,8 +273,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testMarkSettledAction(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $deliveryCost = $this->createTestDeliveryCost();
         $this->assertFalse($deliveryCost->isSettled());
@@ -303,8 +295,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testCancelSettledAction(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $deliveryCost = $this->createTestDeliveryCost();
         $deliveryCost->markAsSettled();
@@ -329,8 +320,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testRecalculateDistanceAction(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $deliveryCost = $this->createTestDeliveryCost();
         $deliveryCost->setDistance(10.0);
@@ -359,8 +349,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testMarkSettledWithAlreadySettledCost(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $deliveryCost = $this->createTestDeliveryCost();
         $deliveryCost->markAsSettled();
@@ -376,8 +365,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testCancelSettledWithUnSettledCost(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $deliveryCost = $this->createTestDeliveryCost();
         $this->assertFalse($deliveryCost->isSettled());
@@ -392,8 +380,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testDetailPageDisplaysCorrectly(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $deliveryCost = $this->createTestDeliveryCost();
 
@@ -408,8 +395,7 @@ final class DeliveryCostCrudControllerTest extends AbstractEasyAdminControllerTe
 
     public function testDeleteDeliveryCost(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         // 创建测试数据
         $deliveryCost = $this->createTestDeliveryCost();

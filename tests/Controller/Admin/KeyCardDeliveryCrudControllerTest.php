@@ -84,8 +84,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testIndexPageDisplaysCorrectly(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin/hotel-card-delivery/key-card-delivery');
         // 设置静态客户端以支持响应断言
@@ -97,8 +96,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testNewFormDisplaysCorrectFields(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin/hotel-card-delivery/key-card-delivery?crudAction=new');
         // 设置静态客户端以支持响应断言
@@ -111,8 +109,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testValidationErrorsOnRequiredFields(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin/hotel-card-delivery/key-card-delivery?crudAction=new');
         // 设置静态客户端以支持响应断言
@@ -131,8 +128,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
      */
     public function testValidationErrors(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $crawler = $client->request('GET', '/admin/hotel-card-delivery/key-card-delivery?crudAction=new');
         // 设置静态客户端以支持响应断言
@@ -186,8 +182,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testCreateNewKeyCardDelivery(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $order = $this->createTestOrder();
         $hotel = $this->createTestHotel();
@@ -218,8 +213,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testEditExistingKeyCardDelivery(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $delivery = $this->createTestDelivery();
 
@@ -239,8 +233,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testStartDeliveryAction(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $delivery = $this->createTestDelivery();
         $delivery->setStatus(DeliveryStatusEnum::PENDING); // 修复：只有 PENDING 状态才能开始配送
@@ -261,8 +254,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testMarkCompletedAction(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $delivery = $this->createTestDelivery();
         $delivery->setStatus(DeliveryStatusEnum::IN_PROGRESS);
@@ -284,8 +276,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testCancelDeliveryAction(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $delivery = $this->createTestDelivery();
         $delivery->setStatus(DeliveryStatusEnum::ASSIGNED);
@@ -306,8 +297,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
 
     public function testDetailPageDisplaysCorrectly(): void
     {
-        $client = self::createClientWithDatabase();
-        $this->loginAsAdmin($client);
+        $client = self::createAuthenticatedClient();
 
         $delivery = $this->createTestDelivery();
 
