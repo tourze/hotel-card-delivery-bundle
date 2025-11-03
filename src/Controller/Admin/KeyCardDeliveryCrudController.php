@@ -110,12 +110,15 @@ final class KeyCardDeliveryCrudController extends AbstractCrudController
             ->setNumDecimals(2)
         ;
 
-        yield ImageField::new('receiptPhotoUrl', '交接凭证照片')
+        // 在测试环境下确保上传目录存在，避免表单构建时报目录不存在
+        $receiptImageField = ImageField::new('receiptPhotoUrl', '交接凭证照片')
             ->setBasePath('/uploads/receipts/')
-            ->setUploadDir('public/uploads/receipts')
+            ->setUploadDir($this->getReceiptUploadDir())
             ->setUploadedFileNamePattern('[randomhash].[extension]')
             ->onlyOnForms()
         ;
+
+        yield $receiptImageField;
 
         yield DateTimeField::new('completedTime', '完成时间')
             ->setFormat('yyyy-MM-dd HH:mm')
@@ -285,5 +288,60 @@ final class KeyCardDeliveryCrudController extends AbstractCrudController
             ->setAction(Action::INDEX)
             ->generateUrl()
         ;
+    }
+
+    /**
+     * 判断是否为测试环境。
+     */
+    private function isTestEnvironment(): bool
+    {
+        if (defined('PHPUNIT_RUNNING')) {
+            return true;
+        }
+
+        $env = null;
+        try {
+            /** @var string|null $env */
+            $env = $this->getParameter('kernel.environment');
+        } catch (\Throwable) {
+            // 忽略获取参数失败的异常，回退到环境变量
+        }
+
+        if (null === $env) {
+            $appEnv = getenv('APP_ENV');
+            $env = (false !== $appEnv) ? $appEnv : getenv('SYMFONY_ENV');
+            $env = (false !== $env) ? $env : '';
+        }
+
+        return 'test' === $env;
+    }
+
+    /**
+     * 获取交接凭证上传目录（相对项目根路径），并在测试环境下确保目录存在。
+     * 返回值用于 EasyAdmin 的 setUploadDir。
+     */
+    private function getReceiptUploadDir(): string
+    {
+        $relativeUploadDir = 'public/uploads/receipts';
+
+        if ($this->isTestEnvironment()) {
+            // 测试环境下，使用 kernel.project_dir 计算物理路径并确保目录存在
+            $projectDir = null;
+            try {
+                $param = $this->getParameter('kernel.project_dir');
+                /** @var string $projectDir */
+                $projectDir = is_string($param) ? $param : '.';
+            } catch (\Throwable) {
+                $cwd = getcwd();
+                $projectDir = (false !== $cwd) ? $cwd : '.';
+            }
+
+            $fullUploadDir = rtrim($projectDir, '/\\') . '/' . $relativeUploadDir;
+            if (!is_dir($fullUploadDir)) {
+                @mkdir($fullUploadDir, 0777, true);
+            }
+        }
+
+        return $relativeUploadDir;
     }
 }
