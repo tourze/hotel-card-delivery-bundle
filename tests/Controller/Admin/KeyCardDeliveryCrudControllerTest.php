@@ -169,7 +169,7 @@ final class KeyCardDeliveryCrudControllerTest extends AbstractEasyAdminControlle
             if ($invalidFeedback->count() > 0) {
                 $this->assertStringContainsString('should not be blank', $invalidFeedback->text());
             }
-        // 如果没有找到.invalid-feedback，就简单验证状态码
+            // 如果没有找到.invalid-feedback，就简单验证状态码
         } else {
             // 其他状态码，验证响应合理性
             $this->assertTrue(

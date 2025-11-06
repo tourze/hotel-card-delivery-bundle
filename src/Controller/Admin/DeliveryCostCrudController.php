@@ -76,7 +76,8 @@ final class DeliveryCostCrudController extends AbstractCrudController
                 $order = $value->getOrder();
                 $hotel = $value->getHotel();
 
-                return sprintf('%s - %s',
+                return sprintf(
+                    '%s - %s',
                     null !== $order ? $order->getOrderNo() : 'Unknown',
                     null !== $hotel ? $hotel->getName() : 'Unknown'
                 );
