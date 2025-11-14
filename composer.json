@@ -56,5 +56,6 @@
     "psr-4": {
       "Tourze\\HotelCardDeliveryBundle\\Tests\\": "tests"
     }
-  }
+  },
+  "version": "1.0.0"
 }
